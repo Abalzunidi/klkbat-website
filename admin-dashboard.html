@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - KLKBAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --primary-dark: #00b8c4;
+            --secondary: #8b5cf6;
+            --accent: #f97316;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #13131a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-darker);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 0 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.05);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            font-size: 1.2rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .logout-btn {
+            padding: 0.7rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stat-icon.primary {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .stat-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .stat-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .stat-icon.accent {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-trend.up {
+            color: var(--success);
+        }
+        
+        .stat-trend.down {
+            color: var(--danger);
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--bg-dark);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+        
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: rgba(0, 240, 255, 0.05);
+        }
+        
+        th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tbody tr:hover {
+            background: rgba(0, 240, 255, 0.03);
+        }
+        
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-badge.new {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-badge.completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-badge.cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Charts placeholder */
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chart-placeholder {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+        }
+        
+        .tab:hover,
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">KLKBAT</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="services">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Services</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="products">
+                        <i class="fas fa-box"></i>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="customers">
+                        <i class="fas fa-users"></i>
+                        <span>Customers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <div class="user-avatar">AD</div>
+                    <div>
+                        <div style="font-weight: 600;">Admin</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2243464f4b4c62494e494043560c414d4f">[email&#160;protected]</a></div>
+                    </div>
+                    <a href="/" class="logout-btn">
+                        <i class="fas fa-home"></i> Website
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon success">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Total Revenue (SAR)</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Pending Orders</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon accent">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Total Customers</div>
+                    </div>
+                </div>
+                
+                <!-- Recent Orders -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Orders</h2>
+                        <button class="btn btn-secondary" onclick="showSection('orders')">View All</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Service/Product</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="section">
+                    <h2 class="section-title">Revenue Overview</h2>
+                    <div class="grid-2">
+                        <div class="chart-container">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line" style="font-size: 3rem; opacity: 0.2;"></i>
+                                <p>Monthly Revenue Chart</p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-pie" style="font-size: 3rem; opacity: 0.2;"></i>
+                                <p>Services Distribution</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Orders Section -->
+            <div id="orders-section" class="content-section" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">All Orders</h2>
+                        <div style="display: flex; gap: 1rem;">
+                            <select class="btn btn-secondary" id="orderStatusFilter">
+                                <option value="all">All Status</option>
+                                <option value="new">New</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Service/Product</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allOrdersTable">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Services Section -->
+            <div id="services-section" class="content-section" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Services Management</h2>
+                    </div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card">
+                            <h3 style="margin-bottom: 1rem;">Basic</h3>
+                            <div class="stat-value" id="basic-count">0</div>
+                            <div class="stat-label">Active Subscriptions</div>
+                            <div class="stat-value" style="font-size: 1.5rem; margin-top: 1rem;">99 SAR</div>
+                            <div class="stat-label">per month</div>
+                        </div>
+                        <div class="stat-card" style="border-color: var(--primary);">
+                            <h3 style="margin-bottom: 1rem;">Pro</h3>
+                            <div class="stat-value" id="pro-count">0</div>
+                            <div class="stat-label">Active Subscriptions</div>
+                            <div class="stat-value" style="font-size: 1.5rem; margin-top: 1rem;">399 SAR</div>
+                            <div class="stat-label">per month</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3 style="margin-bottom: 1rem;">Super</h3>
+                            <div class="stat-value" id="super-count">0</div>
+                            <div class="stat-label">Active Subscriptions</div>
+                            <div class="stat-value" style="font-size: 1.5rem; margin-top: 1rem;">999 SAR</div>
+                            <div class="stat-label">per month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Section -->
+            <div id="products-section" class="content-section" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Products Management</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Sales</th>
+                                    <th>Revenue</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTable">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customers Section -->
+            <div id="customers-section" class="content-section" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Customers</h2>
+                        <input type="search" placeholder="Search customers..." class="btn btn-secondary" style="width: 300px;">
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Orders</th>
+                                    <th>Total Spent</th>
+                                    <th>Join Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTable">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Section -->
+            <div id="analytics-section" class="content-section" style="display: none;">
+                <div class="section">
+                    <h2 class="section-title">Analytics & Reports</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="analytics-orders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="analytics-revenue">0 SAR</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="analytics-customers">0</div>
+                            <div class="stat-label">Total Customers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="analytics-avg">0 SAR</div>
+                            <div class="stat-label">Average Order Value</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 3rem;">
+                        <h3 style="margin-bottom: 2rem;">Sales by Service</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Orders</th>
+                                        <th>Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="analyticsServicesTable">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; padding: 3rem;">No data yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div id="settings-section" class="content-section" style="display: none;">
+                <div class="section">
+                    <h2 class="section-title">Settings</h2>
+                    
+                    <div class="tabs">
+                        <button class="tab active" data-tab="general">General</button>
+                        <button class="tab" data-tab="payment">Payment</button>
+                        <button class="tab" data-tab="notifications">Notifications</button>
+                        <button class="tab" data-tab="security">Security</button>
+                    </div>
+                    
+                    <div id="general-tab" class="tab-content active">
+                        <div class="table-container" style="padding: 2rem;">
+                            <h3 style="margin-bottom: 2rem;">Services & Pricing Settings</h3>
+                            <form id="settingsForm" style="max-width: 800px;">
+                                <h4 style="color: var(--primary); margin-bottom: 1rem;">Basic</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Service Name</label>
+                                        <input type="text" id="basic_name" value="Basic" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Price (SAR/month)</label>
+                                        <input type="number" id="basic_price" value="99" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                </div>
+                                
+                                <h4 style="color: var(--primary); margin-bottom: 1rem;">Pro</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Service Name</label>
+                                        <input type="text" id="pro_name" value="Pro" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Price (SAR/month)</label>
+                                        <input type="number" id="pro_price" value="399" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                </div>
+                                
+                                <h4 style="color: var(--primary); margin-bottom: 1rem;">Super</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Service Name</label>
+                                        <input type="text" id="super_name" value="Super" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Price (SAR/month)</label>
+                                        <input type="number" id="super_price" value="999" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                </div>
+                                
+                                <h4 style="color: var(--accent); margin-bottom: 1rem;">Landing Page Pro (Product)</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Product Name</label>
+                                        <input type="text" id="product_name" value="Landing Page Pro" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Price (SAR - one time)</label>
+                                        <input type="number" id="product_price" value="499" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                    </div>
+                                </div>
+                                
+                                <hr style="border: 1px solid var(--border); margin: 2rem 0;">
+                                
+                                <h4 style="margin-bottom: 1rem;">Company Information</h4>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Company Name</label>
+                                    <input type="text" id="company_name" value="KLKBAT" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                </div>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Support Email</label>
+                                    <input type="email" id="support_email" value="support@klkbat.com" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                </div>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Phone Number</label>
+                                    <input type="tel" id="phone_number" value="+966 XX XXX XXXX" style="width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save All Changes</button>
+                                
+                                <hr style="border: 1px solid var(--border); margin: 3rem 0;">
+                                
+                                <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid var(--danger); border-radius: 12px; padding: 2rem;">
+                                    <h4 style="color: var(--danger); margin-bottom: 1rem;">⚠️ Danger Zone</h4>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Careful! These actions cannot be undone.</p>
+                                    <button type="button" onclick="clearAllData()" class="btn" style="background: var(--danger); color: white;">Clear All Orders & Data</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div id="payment-tab" class="tab-content">
+                        <div class="table-container" style="padding: 2rem;">
+                            <h3 style="margin-bottom: 2rem;">Payment Settings</h3>
+                            <p style="color: var(--text-secondary);">Configure payment gateways and billing information</p>
+                        </div>
+                    </div>
+                    
+                    <div id="notifications-tab" class="tab-content">
+                        <div class="table-container" style="padding: 2rem;">
+                            <h3 style="margin-bottom: 2rem;">Notification Settings</h3>
+                            <p style="color: var(--text-secondary);">Manage email and system notifications</p>
+                        </div>
+                    </div>
+                    
+                    <div id="security-tab" class="tab-content">
+                        <div class="table-container" style="padding: 2rem;">
+                            <h3 style="margin-bottom: 2rem;">Security Settings</h3>
+                            <p style="color: var(--text-secondary);">Change password and manage security options</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+let orders = [];
+
+async function getOrders() {
+    try {
+        const response = await fetch('/api/orders');
+        orders = await response.json();
+        return orders;
+    } catch (error) {
+        console.error('Error:', error);
+        return [];
+    }
+}
+
+async function initializeDashboard() {
+    await getOrders();
+    updateStats();
+    loadRecentOrders();
+    loadAllOrders();
+    loadCustomers();
+    loadProducts();
+    loadAnalytics();
+    await loadSettings();
+}
+
+function updateStats() {
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, o) => sum + (o.amount || 0), 0);
+    const pendingOrders = orders.filter(o => o.status === 'new' || o.status === 'pending').length;
+    const uniqueCustomers = new Set(orders.map(o => o.email)).size;
+    
+    document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = totalOrders;
+    document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = totalRevenue.toLocaleString();
+    document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = pendingOrders;
+    document.querySelector('.stat-card:nth-child(4) .stat-value').textContent = uniqueCustomers;
+    
+    const basicCount = orders.filter(o => o.service && o.service.includes('Basic')).length;
+    const proCount = orders.filter(o => o.service && o.service.includes('Pro') && !o.service.includes('Page')).length;
+    const superCount = orders.filter(o => o.service && o.service.includes('Super')).length;
+    
+    const basicEl = document.getElementById('basic-count');
+    const proEl = document.getElementById('pro-count');
+    const superEl = document.getElementById('super-count');
+    
+    if (basicEl) basicEl.textContent = basicCount;
+    if (proEl) proEl.textContent = proCount;
+    if (superEl) superEl.textContent = superCount;
+}
+
+function loadRecentOrders() {
+    const tbody = document.getElementById('recentOrdersTable');
+    const recentOrders = orders.slice(0, 5);
+    
+    if (recentOrders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 3rem;">No orders yet</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = recentOrders.map(order => `
+        <tr>
+            <td><strong>${order.id}</strong></td>
+            <td>${order.customer}</td>
+            <td>${order.service}</td>
+            <td><strong>${order.amount} SAR</strong></td>
+            <td><span class="status-badge ${order.status}">${order.status.toUpperCase()}</span></td>
+            <td>${order.date}</td>
+            <td>
+                <div class="action-btns">
+                    <button class="action-btn" onclick="viewOrder('${order.id}')"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn" onclick="updateOrderStatus('${order.id}')"><i class="fas fa-edit"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function loadAllOrders(filter = 'all') {
+    const tbody = document.getElementById('allOrdersTable');
+    const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
+    
+    if (filteredOrders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 3rem;">No orders found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = filteredOrders.map(order => `
+        <tr>
+            <td><strong>${order.id}</strong></td>
+            <td>${order.customer}</td>
+            <td>${order.email}</td>
+            <td>${order.phone}</td>
+            <td>${order.service}</td>
+            <td><strong>${order.amount} SAR</strong></td>
+            <td><span class="status-badge ${order.status}">${order.status.toUpperCase()}</span></td>
+            <td>${order.date}</td>
+            <td>
+                <div class="action-btns">
+                    <button class="action-btn" onclick="viewOrder('${order.id}')"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn" onclick="updateOrderStatus('${order.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function loadCustomers() {
+    const tbody = document.getElementById('customersTable');
+    const customerMap = {};
+    
+    orders.forEach(order => {
+        if (!customerMap[order.email]) {
+            customerMap[order.email] = {
+                name: order.customer,
+                email: order.email,
+                phone: order.phone,
+                orders: 0,
+                spent: 0,
+                date: order.date
+            };
+        }
+        customerMap[order.email].orders++;
+        customerMap[order.email].spent += order.amount || 0;
+    });
+    
+    const customers = Object.values(customerMap);
+    
+    if (customers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 3rem;">No customers yet</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = customers.map(customer => `
+        <tr>
+            <td><strong>${customer.name}</strong></td>
+            <td>${customer.email}</td>
+            <td>${customer.phone}</td>
+            <td>${customer.orders}</td>
+            <td><strong>${customer.spent} SAR</strong></td>
+            <td>${customer.date}</td>
+            <td>
+                <div class="action-btns">
+                    <button class="action-btn" onclick="alert('Customer: ${customer.name}')"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn" onclick="window.location.href='mailto:${customer.email}'"><i class="fas fa-envelope"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function loadProducts() {
+    const tbody = document.getElementById('productsTable');
+    const productOrders = orders.filter(o => o.service && o.service.includes('Page'));
+    const sales = productOrders.length;
+    const revenue = productOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
+    
+    if (sales === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 3rem;">No product sales yet</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = `
+        <tr>
+            <td><strong>Landing Page Pro</strong></td>
+            <td>499 SAR</td>
+            <td>${sales}</td>
+            <td>${revenue.toLocaleString()} SAR</td>
+            <td><span class="status-badge completed">Active</span></td>
+            <td>
+                <div class="action-btns">
+                    <button class="action-btn" onclick="alert('Product sales: ${sales}')"><i class="fas fa-eye"></i></button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function loadAnalytics() {
+    // Update analytics numbers
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, o) => sum + (o.amount || 0), 0);
+    const uniqueCustomers = new Set(orders.map(o => o.email)).size;
+    const avgOrder = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
+    
+    document.getElementById('analytics-orders').textContent = totalOrders;
+    document.getElementById('analytics-revenue').textContent = totalRevenue.toLocaleString() + ' SAR';
+    document.getElementById('analytics-customers').textContent = uniqueCustomers;
+    document.getElementById('analytics-avg').textContent = avgOrder + ' SAR';
+    
+    // Update services breakdown
+    const serviceMap = {};
+    orders.forEach(order => {
+        const service = order.service || 'Unknown';
+        if (!serviceMap[service]) {
+            serviceMap[service] = { orders: 0, revenue: 0 };
+        }
+        serviceMap[service].orders++;
+        serviceMap[service].revenue += order.amount || 0;
+    });
+    
+    const tbody = document.getElementById('analyticsServicesTable');
+    const services = Object.entries(serviceMap);
+    
+    if (services.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 3rem;">No data yet</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = services.map(([service, data]) => `
+        <tr>
+            <td><strong>${service}</strong></td>
+            <td>${data.orders}</td>
+            <td><strong>${data.revenue.toLocaleString()} SAR</strong></td>
+        </tr>
+    `).join('');
+}
+                    <button class="action-btn" onclick="alert('Product sales: ${sales}')"><i class="fas fa-eye"></i></button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function showSection(section) {
+    document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+    const sectionEl = document.getElementById(`${section}-section`);
+    if (sectionEl) sectionEl.style.display = 'block';
+    
+    const titles = {
+        'dashboard': 'Dashboard',
+        'orders': 'Orders Management',
+        'services': 'Services',
+        'products': 'Products',
+        'customers': 'Customers',
+        'analytics': 'Analytics',
+        'settings': 'Settings'
+    };
+    document.querySelector('.header h1').textContent = titles[section] || 'Dashboard';
+    
+    if (section === 'orders') loadAllOrders();
+    else if (section === 'customers') loadCustomers();
+    else if (section === 'products') loadProducts();
+    else if (section === 'analytics') loadAnalytics();
+}
+
+function viewOrder(id) {
+    const order = orders.find(o => o.id === id);
+    if (order) {
+        let details = `Order Details:\n\nID: ${order.id}\nCustomer: ${order.customer}\nEmail: ${order.email}\nPhone: ${order.phone}\nService: ${order.service}\nAmount: ${order.amount} SAR\nStatus: ${order.status}\nDate: ${order.date}`;
+        if (order.message) details += `\n\nMessage: ${order.message}`;
+        alert(details);
+    }
+}
+
+async function updateOrderStatus(id) {
+    const newStatus = prompt('Enter new status (new/pending/completed/cancelled):');
+    if (newStatus && ['new', 'pending', 'completed', 'cancelled'].includes(newStatus)) {
+        try {
+            const response = await fetch(`/api/orders/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            
+            if (response.ok) {
+                alert('✅ Status updated!');
+                await initializeDashboard();
+            } else {
+                alert('❌ Failed to update');
+            }
+        } catch (error) {
+            alert('❌ Error: ' + error.message);
+        }
+    }
+}
+
+async function deleteOrder(id) {
+    if (confirm(`Delete order ${id}?`)) {
+        try {
+            const response = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                alert('✅ Deleted!');
+                await initializeDashboard();
+            } else {
+                alert('❌ Failed');
+            }
+        } catch (error) {
+            alert('❌ Error');
+        }
+    }
+}
+
+async function loadSettings() {
+    try {
+        const response = await fetch('/api/settings');
+        const settings = await response.json();
+        
+        if (settings.basic_name) document.getElementById('basic_name').value = settings.basic_name;
+        if (settings.basic_price) document.getElementById('basic_price').value = settings.basic_price;
+        if (settings.pro_name) document.getElementById('pro_name').value = settings.pro_name;
+        if (settings.pro_price) document.getElementById('pro_price').value = settings.pro_price;
+        if (settings.super_name) document.getElementById('super_name').value = settings.super_name;
+        if (settings.super_price) document.getElementById('super_price').value = settings.super_price;
+        if (settings.product_name) document.getElementById('product_name').value = settings.product_name;
+        if (settings.product_price) document.getElementById('product_price').value = settings.product_price;
+        if (settings.company_name) document.getElementById('company_name').value = settings.company_name;
+        if (settings.support_email) document.getElementById('support_email').value = settings.support_email;
+        if (settings.phone_number) document.getElementById('phone_number').value = settings.phone_number;
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: linear-gradient(135deg, #00f0ff, #8b5cf6);
+        color: #0a0a0f;
+        padding: 1.5rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 10px 30px rgba(0, 240, 255, 0.4);
+        animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.transition = 'all 0.3s ease';
+        notification.style.transform = 'translateX(400px)';
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}
+
+// Wait for page to load
+document.addEventListener('DOMContentLoaded', function() {
+    // Navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = link.dataset.section;
+            showSection(section);
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        });
+    });
+    
+    // Order filter
+    const orderFilter = document.getElementById('orderStatusFilter');
+    if (orderFilter) {
+        orderFilter.addEventListener('change', (e) => {
+            loadAllOrders(e.target.value);
+        });
+    }
+    
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.dataset.tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const tabContent = document.getElementById(`${tabName}-tab`);
+            if (tabContent) tabContent.classList.add('active');
+        });
+    });
+    
+    // Settings form
+    const settingsForm = document.getElementById('settingsForm');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const settings = {
+                basic_name: document.getElementById('basic_name').value,
+                basic_price: parseInt(document.getElementById('basic_price').value),
+                pro_name: document.getElementById('pro_name').value,
+                pro_price: parseInt(document.getElementById('pro_price').value),
+                super_name: document.getElementById('super_name').value,
+                super_price: parseInt(document.getElementById('super_price').value),
+                product_name: document.getElementById('product_name').value,
+                product_price: parseInt(document.getElementById('product_price').value),
+                company_name: document.getElementById('company_name').value,
+                support_email: document.getElementById('support_email').value,
+                phone_number: document.getElementById('phone_number').value
+            };
+            
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+                
+                if (response.ok) {
+                    showNotification('✅ Settings saved! Changes are LIVE on website');
+                    setTimeout(() => {
+                        alert('✅ Settings saved successfully!\n\n✨ The changes are now LIVE:\n\n- Service names updated\n- Prices updated\n- All pages automatically reflect new settings\n\nVisit any service page to see the changes!');
+                    }, 500);
+                } else {
+                    alert('❌ Failed to save settings');
+                }
+            } catch (error) {
+                alert('❌ Error saving settings');
+            }
+        });
+    }
+    
+    // Initialize dashboard
+    initializeDashboard().then(() => {
+        // Set initial count after orders are loaded
+        lastOrderCount = orders.length;
+    });
+    
+    // Auto-refresh with notifications
+    let lastOrderCount = 0;
+    setInterval(async () => {
+        const currentCount = orders.length;
+        await getOrders();
+        
+        if (orders.length !== currentCount) {
+            if (orders.length > lastOrderCount) {
+                const newOrdersCount = orders.length - lastOrderCount;
+                showNotification(`🔔 ${newOrdersCount} new order${newOrdersCount > 1 ? 's' : ''} received!`);
+            }
+            lastOrderCount = orders.length;
+            updateStats();
+            loadRecentOrders();
+            loadAnalytics();
+        }
+    }, 10000);
+});
+    </script>
+</body>
+</html>
